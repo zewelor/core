@@ -24,6 +24,7 @@ PLATFORMS = [
     SWITCH_DOMAIN,
 ]
 MANAGER = "manager"
+NODES_VALUES = "nodes_values"
 OPTIONS = "options"
 
 # MQTT Topics
