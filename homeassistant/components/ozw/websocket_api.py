@@ -27,7 +27,6 @@ from .const import (
     ATTR_CONFIG_VALUE,
     DOMAIN,
     MANAGER,
-    NODES_VALUES,
     OPTIONS,
 )
 from .lock import ATTR_USERCODE
@@ -197,8 +196,7 @@ async def websocket_migrate_zwave(hass, connection, msg):
     zwave_data = await zwave.async_get_ozw_migration_data(hass)
     _LOGGER.debug("Migration zwave data: %s", zwave_data)
 
-    nodes_values = hass.data[DOMAIN][NODES_VALUES]
-    ozw_data = await async_get_migration_data(hass, nodes_values)
+    ozw_data = await async_get_migration_data(hass)
     _LOGGER.debug("Migration ozw data: %s", ozw_data)
 
     can_migrate = map_node_values(zwave_data, ozw_data)
