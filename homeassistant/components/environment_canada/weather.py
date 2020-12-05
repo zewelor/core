@@ -2,7 +2,7 @@
 import datetime
 import re
 
-from env_canada import ECData  # pylint: disable=import-error
+from env_canada import ECWeather  # pylint: disable=import-error
 import voluptuous as vol
 
 from homeassistant.components.weather import (
@@ -72,19 +72,19 @@ ICON_CONDITION_MAP = {
 }
 
 
-def setup_platform(hass, config, add_devices, discovery_info=None):
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the Environment Canada weather."""
     if config.get(CONF_STATION):
-        ec_data = ECData(station_id=config[CONF_STATION])
+        ec_data = ECWeather(station_id=config[CONF_STATION])
     else:
         lat = config.get(CONF_LATITUDE, hass.config.latitude)
         lon = config.get(CONF_LONGITUDE, hass.config.longitude)
-        ec_data = ECData(coordinates=(lat, lon))
+        ec_data = ECWeather(coordinates=(lat, lon))
 
-    add_devices([ECWeather(ec_data, config)])
+    async_add_entities([ECWeatherHA(ec_data, config)], True)
 
 
-class ECWeather(WeatherEntity):
+class ECWeatherHA(WeatherEntity):
     """Representation of a weather condition."""
 
     def __init__(self, ec_data, config):
@@ -173,9 +173,9 @@ class ECWeather(WeatherEntity):
         """Return the forecast array."""
         return get_forecast(self.ec_data, self.forecast_type)
 
-    def update(self):
+    async def async_update(self):
         """Get the latest data from Environment Canada."""
-        self.ec_data.update()
+        await self.ec_data.update()
 
 
 def get_forecast(ec_data, forecast_type):
